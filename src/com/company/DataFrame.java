@@ -3,6 +3,7 @@ package com.company;
 import sun.font.AttributeValues;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -10,13 +11,39 @@ import java.util.Scanner;
  */
 public class DataFrame {
     private String fileName = "save.txt";
+    private String money;
+    private ArrayList<Player> playersToBuy;
+    private ArrayList<Player> playerSell;
 
-    public String makeContent(){
-        return "";
+    public ArrayList<Player> getPlayersToBuy() {
+        return playersToBuy;
     }
-    public void writeFile(){
+
+    public ArrayList<Player> getPlayerSell() {
+        return playerSell;
+    }
+
+    public String makeContent(int money, ArrayList<Player> playersToBuy, ArrayList<Player> playerSell){
+        String content="";
+        content += "money:"+ money+"\n";
+        if (!playersToBuy.isEmpty()){
+            content+="PlayerToBuy:";
+        }
+        for (Player p : playersToBuy){
+            content+=p.getName()+","+p.getAvgPrice()+","+p.getBuyPrice()+","+p.getSellprice()+";";
+        }
+        content+="\n";
+        if (!playerSell.isEmpty()){
+            content+="PlayerSell:";
+        }
+        for (Player p : playerSell){
+            content+=p.getName()+","+p.getAvgPrice()+","+p.getBuyPrice()+","+p.getSellprice()+";";
+        }
+        return content;
+    }
+    public void writeFile(int money, ArrayList<Player> playersToBuy, ArrayList<Player> playerSell){
         try {
-            String content = makeContent();
+            String content = makeContent(money,playersToBuy,playerSell);
             File file = new File(fileName);
             if(!file.exists()){
                 file.createNewFile();
@@ -29,44 +56,49 @@ public class DataFrame {
             e.printStackTrace();
         }
     }
-    public void readFile(String fileName) {
+    public void readFile() {
+        try {
+            File f = new File(fileName);
+            FileReader fileReader = new FileReader(f);
+            BufferedReader bf = new BufferedReader(fileReader);
+            playersToBuy = new ArrayList<Player>();
+            playerSell = new ArrayList<Player>();
+            while (true){
+                String line = bf.readLine();
+                    if (line!=null){
+                    if (line.startsWith("money")) {
+                        this.money = line.replace("money:", "");
+                    } else if (line.startsWith("PlayerToBuy")) {
+                        line = line.replace("PlayerToBuy:", "");
+                        String[] data = line.split(";");
+                        for (String s : data) {
+                            String name = s.split(",")[0];
+                            String avgPrice = s.split(",")[1];
+                            String buyPrice = s.split(",")[2];
+                            String sellPrice = s.split(",")[3];
+                            playersToBuy.add(new Player(name, Integer.parseInt(avgPrice), Integer.parseInt(buyPrice), Integer.parseInt(sellPrice)));
+                        }
+                    } else if (line.startsWith("PlayerSell")) {
+                        line = line.replace("PlayerSell:", "");
+                        String[] data = line.split(";");
+                        for (String s : data) {
+                            String name = s.split(",")[0];
+                            String avgPrice = s.split(",")[1];
+                            String buyPrice = s.split(",")[2];
+                            String sellPrice = s.split(",")[3];
+                            playerSell.add(new Player(name, Integer.parseInt(avgPrice), Integer.parseInt(buyPrice), Integer.parseInt(sellPrice)));
 
-       /* try {
-            DataFrame f = new DataFrame(fileName);
-            Scanner scanner = new Scanner(f);
-
-            String name;
-
-            // first line : names of attributes
-            Scanner sc = new Scanner(scanner.nextLine());
-            while(sc.hasNext()) {
-                names.add(sc.next());
-                AttributeValues v = new AttributeValues();
-                values.add(v);
-            }
-            sc.close();
-
-            // examples
-            String v;
-            int id;
-            while(scanner.hasNext()) {
-                sc = new Scanner(scanner.nextLine());
-                Example example = new Example();
-                int j = 0;
-                while(sc.hasNext()) {
-                    v = sc.next();
-                    id = values.get(j).add(v);
-                    example.add(id);
-                    j++;
+                        }
+                    }
+                    }else {
+                        break;
+                    }
                 }
-                sc.close();
-                examples.add(example);
-            }
-
-            scanner.close();
 
         } catch (FileNotFoundException exception) {
             System.out.println("File not found");
-        }*/
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

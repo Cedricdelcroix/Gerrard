@@ -5,20 +5,18 @@ public class Main {
 
     public static void main(String[] args) {
 	// write your code here
-        App.focus("chrome");
-        try {
-            goToMarket();
-        } catch (FindFailed findFailed) {
-            findFailed.printStackTrace();
-        }
+        Application application = new Application();
+        application.init();
     }
 
     public static void goToMarket() throws FindFailed {
-        Screen s = new Screen();
+        Application application = new Application();
+        application.init();
+      /*  Screen s = new Screen();
         Pattern p = new Pattern("src/images/transfert.png");
         s.click(p);
         Pattern d = new Pattern("src/images/listeTransfert.png");
         s.click(d);
-
+*/
     }
 }
