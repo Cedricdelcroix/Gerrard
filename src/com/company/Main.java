@@ -1,22 +1,23 @@
 package com.company;
+import org.sikuli.basics.FileManager;
+import org.sikuli.basics.Settings;
+import org.sikuli.basics.proxies.Vision;
 import org.sikuli.script.*;
 import org.sikuli.script.Screen;
+
+import java.io.File;
+
 public class Main {
 
     public static void main(String[] args) {
 	// write your code here
+        FileManager.loadLibrary("VisionProxy");
+        Vision.setParameter("MinTargetSize",12);
+        App.focus("chrome");
+        Settings.MoveMouseDelay=0;
         Application application = new Application();
-        application.init();
+        application.test();
+
     }
 
-    public static void goToMarket() throws FindFailed {
-        Application application = new Application();
-        application.init();
-      /*  Screen s = new Screen();
-        Pattern p = new Pattern("src/images/transfert.png");
-        s.click(p);
-        Pattern d = new Pattern("src/images/listeTransfert.png");
-        s.click(d);
-*/
-    }
 }
