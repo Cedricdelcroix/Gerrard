@@ -5,41 +5,38 @@ import com.company.Player;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.*;
 import org.sikuli.script.Screen;
-import sun.awt.X11.*;
 
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
+import java.util.concurrent.TimeUnit;
+
 
 /**
  * Created by cedric on 02/10/15.
  */
 public class MarketScreen {
-    public void goToHome() throws FindFailed {
-        Screen s = new Screen();
-       s.click(new Region(232,169,15,6));
+    public void goToHome(Screen s) throws FindFailed {
+       s.click(new Region(509,312,55,15));
     }
 
-    public void goToMarket() throws FindFailed {
-        Screen s = new Screen();
-        Pattern p = new Pattern("src/images/transfert.png");
-        s.click(p);
-        Pattern d = new Pattern("src/images/marchetransf.png");
-        s.click(d);
+    public void goToMarket(Screen s) throws FindFailed {
+        s.click(new Region(920,315,72,11));
+        s.click(new Region(789,342,72,7));
     }
 
-    public void FillPlayer(Player player){
-        Screen s = new Screen();
+    public void FillPlayer(Screen s, Player player){
         Pattern p = new Pattern("src/images/saisirnom.png");
         try {
-            s.type(p,player.getName()+Key.ENTER);
+            s.type(p,player.getName());
+            TimeUnit.MILLISECONDS.sleep(1000);
+            s.click(new Region(562,483,79,21));
+            TimeUnit.MILLISECONDS.sleep(2000);
         } catch (FindFailed findFailed) {
             findFailed.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
-    public void RemovePlayer() {
-        Screen s = new Screen();
+    public void RemovePlayer(Screen s) {
         Pattern p = new Pattern("src/images/delete.png");
         try {
             if(s.exists(p)!=null) {
@@ -49,10 +46,9 @@ public class MarketScreen {
             findFailed.printStackTrace();
         }
     }
-    public void FillPrice(Player player){
-        Screen s = new Screen();
+    public void FillPrice(Screen s, Player player){
         try {
-            Region reg = new Region(432,550,6,8);
+            Region reg = new Region(710,694,60,17);
             s.doubleClick(reg);
             s.click(reg);
             s.paste(String.valueOf(player.getBuyPrice()));
@@ -60,14 +56,13 @@ public class MarketScreen {
             findFailed.printStackTrace();
         }
     }
-    public void searchPlayer(Player player){
-        FillPlayer(player);
-        FillPrice(player);
-        search();
+    public void searchPlayer(Screen s, Player player){
+        FillPlayer(s, player);
+        FillPrice(s, player);
+        search(s);
     }
-    public void search(){
-        Screen s = new Screen();
-        Region region = new Region(420,620,94,15);
+    public void search(Screen s){
+        Region region = new Region(687,763,82,14);
         try {
             s.click(region);
         } catch (FindFailed findFailed) {
@@ -80,10 +75,11 @@ public class MarketScreen {
     public boolean IsBuyable(){
         return false;
     }
-    public boolean isFind(){
-        Screen  s = new Screen();
-        Pattern p = new Pattern("src/images/oknotfind.png");
-        if (s.exists(p)!=null){
+    public boolean isFind() throws FindFailed {
+        Screen s = new Screen();
+        Region r = s.setRect(735,372,436,248);
+        Pattern p = new Pattern("src/images/noresult.png");
+        if (r.exists(p)!=null){
             return true;
         }else {
             return false;
@@ -116,18 +112,18 @@ public class MarketScreen {
         }
     }
     public void clickSearch(){
-        Settings.MoveMouseDelay=0;
         Screen s = new Screen();
-        Pattern p = new Pattern("src/images/recherche.png");
+        Settings.MoveMouseDelay=0;
+        Region region = new Region(687,763,82,14);
         try {
-            s.click(p);
+            s.click(region);
         } catch (FindFailed findFailed) {
             findFailed.printStackTrace();
         }
     }
     public void clickOk(){
-        Settings.MoveMouseDelay=0;
         Screen s = new Screen();
+        Settings.MoveMouseDelay=0;
         Pattern p = new Pattern("src/images/oknotfind.png");
         try {
             s.click(p);
@@ -135,11 +131,9 @@ public class MarketScreen {
             findFailed.printStackTrace();
         }
     }
-    public void playerDetail(Player player){
+    public void playerDetail(Screen s){
         Settings.MoveMouseDelay=0;
-        Screen s = new Screen();
-        Region region = new Region(218,480,104,150);
-        Pattern p = new Pattern("src/images/detail.png");
+        Region region = new Region(495,618,40,240);
         try {
             Settings.MoveMouseDelay=0;
             s.click(region);
@@ -148,8 +142,7 @@ public class MarketScreen {
         }
 
     }
-    public void buyPlayer(){
-        Screen s = new Screen();
+    public void buyPlayer(Screen s){
         Pattern p = new Pattern("src/images/acheter.png");
         Pattern confirm = new Pattern("src/images/oknotfind.png");
         try {
